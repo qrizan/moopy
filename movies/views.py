@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Movie, Genre
+from .forms import GenreForm
 
 
 def movie_list(request):
@@ -64,7 +65,18 @@ def genre_detail(request, genre_id=None):
 
 
 def genre_create(request):
-    pass
+    form = GenreForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+    # if request.method  == "POST":
+    #     name = request.POST.get("name")
+    #     Genre.objects.create(name=name)
+    context = {
+        "form" : form,
+        "title" : "Create New Genre"
+    }
+    return render(request, "genre_create.html", context)
 
 
 def genre_update(request):

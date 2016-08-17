@@ -12,7 +12,7 @@ urlpatterns = [
 
     url(r'^genres/$', views.genre_list, name='genre_list'),
     url(r'^genres/detail/(?P<genre_id>\d+)/$', views.genre_detail, name='genre_detail'),
-    url(r'^genre/create/$', views.genre_create, name='genre_create'),
-    url(r'^genre/edit/$', views.genre_update, name='genre_update'),
-    url(r'^genre/delete/$', views.genre_delete, name='genre_delete'),
+    url(r'^genres/create/$', views.genre_create, name='genre_create'),
+    url(r'^genres/edit/$', views.genre_update, name='genre_update'),
+    url(r'^genres/delete/$', views.genre_delete, name='genre_delete'),
 ]
