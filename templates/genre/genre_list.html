@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Genre List{% endblock %}
+{% block title %}
+{{ title }} | {{ block.super}}
+{% endblock %}
 
 {% block content %}
-    {% for genre in all_genres %}
-        <a href="{{ genre.get_absolute_url }}">{{ genre.name }} </a><br/>
-    {% endfor %}
+    <div class="ui middle aligned divided list">
+        {% for genre in all_genres %}
+          <div class="item">
+            <div class="right floated content">
+                <a href="{{ genre.get_absolute_url }}" class="ui small blue button">Detail</a>
+            </div>
+            <div class="content">
+                <h3>{{ genre.name }}</h3>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}

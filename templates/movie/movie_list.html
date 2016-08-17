@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% block title %}
+{{ title }} | {{ block.super}}
+{% endblock %}
 
 {% block content %}
-    <h1>movie list it's work</h1>
-
     {% for movie in all_movies %}
-        {{ movie.pk }} <br/>
+        {{ movie.title }} <br/>
+        {{ movie.description | linebreaks | truncatechars:150 }} <br/>
         {{ movie.created }} <br/>
         {{ movie.updated }} <br/>
     {% endfor %}
