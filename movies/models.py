@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 import datetime
 
 YEAR_CHOICES = []
@@ -14,6 +15,9 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("movies:genre_detail", kwargs={"genre_id": self.id})
+
 
 class Movie(models.Model):
     title = models.CharField(max_length=150)
@@ -27,3 +31,6 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("movies:movie_detail", kwargs={"genre_id": self.id})
