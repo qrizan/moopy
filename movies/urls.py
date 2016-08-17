@@ -11,8 +11,8 @@ urlpatterns = [
     url(r'^movie/delete/$', views.movie_delete, name='movie_delete'),
 
     url(r'^genres/$', views.genre_list, name='genre_list'),
-    url(r'^genres/detail/(?P<genre_id>\d+)/$', views.genre_detail, name='genre_detail'),
+    url(r'^genres/(?P<genre_id>\d+)/$', views.genre_detail, name='genre_detail'),
     url(r'^genres/create/$', views.genre_create, name='genre_create'),
-    url(r'^genres/edit/$', views.genre_update, name='genre_update'),
-    url(r'^genres/delete/$', views.genre_delete, name='genre_delete'),
+    url(r'^genres/(?P<genre_id>\d+)/edit/$', views.genre_update, name='genre_update'),
+    url(r'^genres/(?P<genre_id>\d+)/delete/$', views.genre_delete, name='genre_delete'),
 ]

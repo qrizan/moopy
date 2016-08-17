@@ -1,4 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
 from .forms import GenreForm
 
@@ -67,23 +69,44 @@ def genre_detail(request, genre_id=None):
 def genre_create(request):
     form = GenreForm(request.POST or None)
     if form.is_valid():
-        instance = form.save(commit=False)
-        instance.save()
+        genre = form.save(commit=False)
+        genre.save()
     # if request.method  == "POST":
     #     name = request.POST.get("name")
     #     Genre.objects.create(name=name)
+        # success message
+        messages.success(request, "Successfully Created")
+        return HttpResponseRedirect(genre.get_absolute_url())
+    else:
+        messages.error(request, "Unsuccessfully Created")
     context = {
         "form" : form,
         "title" : "Create New Genre"
     }
-    return render(request, "genre_create.html", context)
+    return render(request, "genre_form.html", context)
 
 
-def genre_update(request):
-    pass
+def genre_update(request, genre_id = None):
+    genre = get_object_or_404(Genre, id=genre_id)
+    form = GenreForm(request.POST or None, instance= genre)
+    if form.is_valid():
+        genre = form.save(commit= False)
+        genre.save()
+        # success message
+        messages.success(request, "Successfully updated")
+        return HttpResponseRedirect(genre.get_absolute_url())
+
+    context = {
+        "title" : genre.name,
+        "genre": genre,
+        "form": form
+    }
+    return render(request, "genre_form.html", context)
 
 
-def genre_delete(request):
-    pass
-
+def genre_delete(request, genre_id=None ):
+    genre = get_object_or_404(Genre, id=genre_id)
+    genre.delete()
+    messages.success(request, "Successfully deleted")
+    return redirect("movies:genre_list")
 
