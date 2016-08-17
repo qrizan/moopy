@@ -20,7 +20,7 @@ def movie_list(request):
     #     context = {
     #         "title" : "movie List"
     #     }
-    return render(request, "movie_list.html", context)
+    return render(request, "movie/movie_list.html", context)
 
 
 def movie_detail(request):
@@ -54,7 +54,7 @@ def genre_list(request):
     #     context = {
     #         "title" : "movie List"
     #     }
-    return render(request, "genre_list.html", context)
+    return render(request, "genre/genre_list.html", context)
 
 
 def genre_detail(request, genre_id=None):
@@ -63,7 +63,7 @@ def genre_detail(request, genre_id=None):
         "genre" : genre,
         "title" : genre.name
     }
-    return render(request, "genre_detail.html", context)
+    return render(request, "genre/genre_detail.html", context)
 
 
 def genre_create(request):
@@ -83,7 +83,7 @@ def genre_create(request):
         "form" : form,
         "title" : "Create New Genre"
     }
-    return render(request, "genre_form.html", context)
+    return render(request, "genre/genre_form.html", context)
 
 
 def genre_update(request, genre_id = None):
@@ -101,7 +101,7 @@ def genre_update(request, genre_id = None):
         "genre": genre,
         "form": form
     }
-    return render(request, "genre_form.html", context)
+    return render(request, "genre/genre_form.html", context)
 
 
 def genre_delete(request, genre_id=None ):

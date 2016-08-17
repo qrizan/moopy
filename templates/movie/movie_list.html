@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>movie list it's work</h1>
+
+    {% for movie in all_movies %}
+        {{ movie.pk }} <br/>
+        {{ movie.created }} <br/>
+        {{ movie.updated }} <br/>
+    {% endfor %}
+{% endblock %}

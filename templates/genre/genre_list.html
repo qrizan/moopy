@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Genre List{% endblock %}
+
+{% block content %}
+    {% for genre in all_genres %}
+        <a href="{{ genre.get_absolute_url }}">{{ genre.name }} </a><br/>
+    {% endfor %}
+{% endblock %}
