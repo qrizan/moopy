@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
 from .forms import GenreForm
@@ -40,10 +41,26 @@ def movie_delete(request):
 
 
 def genre_list(request):
-    all_genres = Genre.objects.all()
+    genres = Genre.objects.all()
+
+    paginator = Paginator(genres, 5) # Show 10 genres per page
+
+    page_request_var = "page"
+    page = request.GET.get(page_request_var)
+
+    try:
+        all_genres = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_genres = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_genres = paginator.page(paginator.num_pages)
+
     context = {
         "all_genres" : all_genres,
-        "title": "genre List"
+        "title": "genre List",
+        "page_request_var": page_request_var
     }
 
     # if request.user.is_authenticated():

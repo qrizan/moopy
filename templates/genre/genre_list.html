@@ -17,4 +17,16 @@
         {% endfor %}
     </div>
 
+    <div class="ui pagination menu">
+        {% if all_genres.has_previous %}
+            <a class="active item" href="?{{ page_request_var }}={{ contacts.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="item">
+            Page {{ all_genres.number }} of {{ all_genres.paginator.num_pages }}.
+        </span>
+        {% if all_genres.has_next %}
+            <a class="item" href="?{{ page_request_var }}={{ all_genres.next_page_number }}">next</a>
+        {% endif %}
+
+    </div>
 {% endblock %}
