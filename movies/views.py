@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
-from .forms import GenreForm
+from .forms import GenreForm, MovieForm
 
 
 def movie_list(request):
@@ -24,16 +24,51 @@ def movie_list(request):
     return render(request, "movie/movie_list.html", context)
 
 
-def movie_detail(request):
-    pass
+def movie_detail(request, movie_id =None):
+    movie = get_object_or_404(Movie, id=movie_id)
+    context = {
+        "movie" : movie,
+        "title" : movie.title
+    }
+    return render(request, "movie/movie_detail.html", context)
 
 
 def movie_create(request):
-    pass
+    form = MovieForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        movie = form.save(commit=False)
+        movie.save()
+    # if request.method  == "POST":
+    #     name = request.POST.get("name")
+    #     Genre.objects.create(name=name)
+        # success message
+        messages.success(request, "Successfully Created")
+        return HttpResponseRedirect(movie.get_absolute_url())
+    else:
+        messages.error(request, "Unsuccessfully Created")
+    context = {
+        "form" : form,
+        "title" : "Create New Movie"
+    }
+    return render(request, "movie/movie_form.html", context)
 
 
-def movie_update(request):
-    pass
+def movie_update(request, movie_id = None):
+    movie = get_object_or_404(Movie, id=movie_id)
+    form = MovieForm(request.POST or None, request.FILES or None, instance= movie)
+    if form.is_valid():
+        movie = form.save(commit= False)
+        movie.save()
+        # success message
+        messages.success(request, "Successfully updated")
+        return HttpResponseRedirect(movie.get_absolute_url())
+
+    context = {
+        "title" : movie.title,
+        "movie": movie,
+        "form": form
+    }
+    return render(request, "movie/movie_form.html", context)
 
 
 def movie_delete(request):
