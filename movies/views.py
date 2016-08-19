@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
@@ -24,8 +24,8 @@ def movie_list(request):
     return render(request, "movie/movie_list.html", context)
 
 
-def movie_detail(request, movie_id =None):
-    movie = get_object_or_404(Movie, id=movie_id)
+def movie_detail(request, slug= None):
+    movie = get_object_or_404(Movie, slug=slug)
     context = {
         "movie" : movie,
         "title" : movie.title
@@ -34,6 +34,8 @@ def movie_detail(request, movie_id =None):
 
 
 def movie_create(request):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     form = MovieForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         movie = form.save(commit=False)
@@ -54,6 +56,8 @@ def movie_create(request):
 
 
 def movie_update(request, movie_id = None):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     movie = get_object_or_404(Movie, id=movie_id)
     form = MovieForm(request.POST or None, request.FILES or None, instance= movie)
     if form.is_valid():
@@ -71,8 +75,11 @@ def movie_update(request, movie_id = None):
     return render(request, "movie/movie_form.html", context)
 
 
-def movie_delete(request):
-    pass
+def movie_delete(request, movie_id = None):
+    movie = get_object_or_404(Movie, id=movie_id)
+    movie.delete()
+    messages.success(request, "Successfully deleted")
+    return redirect("movies:movie_list")
 
 
 def genre_list(request):
@@ -109,8 +116,8 @@ def genre_list(request):
     return render(request, "genre/genre_list.html", context)
 
 
-def genre_detail(request, genre_id=None):
-    genre = get_object_or_404(Genre, id=genre_id)
+def genre_detail(request, slug= None):
+    genre = get_object_or_404(Genre, slug=slug)
     context = {
         "genre" : genre,
         "title" : genre.name
@@ -119,6 +126,8 @@ def genre_detail(request, genre_id=None):
 
 
 def genre_create(request):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     form = GenreForm(request.POST or None)
     if form.is_valid():
         genre = form.save(commit=False)
@@ -139,6 +148,8 @@ def genre_create(request):
 
 
 def genre_update(request, genre_id = None):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     genre = get_object_or_404(Genre, id=genre_id)
     form = GenreForm(request.POST or None, instance= genre)
     if form.is_valid():
@@ -157,6 +168,8 @@ def genre_update(request, genre_id = None):
 
 
 def genre_delete(request, genre_id=None ):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     genre = get_object_or_404(Genre, id=genre_id)
     genre.delete()
     messages.success(request, "Successfully deleted")
