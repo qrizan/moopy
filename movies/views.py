@@ -102,6 +102,10 @@ def genre_list(request):
     if request.user.is_staff or request.user.is_superuser:
         genres = Genre.objects.all()
 
+    query = request.GET.get("q")
+    if query:
+        genres = genres.filter(name__icontains=query)
+
     paginator = Paginator(genres, 5) # Show 10 genres per page
 
     page_request_var = "page"

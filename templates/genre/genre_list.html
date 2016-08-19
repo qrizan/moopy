@@ -4,6 +4,10 @@
 {% endblock %}
 
 {% block content %}
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Search" value="{{ request.get.q }}"/>
+    <input type="submit" value="Go"/>
+</form>
     <div class="ui middle aligned divided list">
         {% for genre in all_genres %}
           <div class="item">
@@ -19,13 +23,13 @@
 
     <div class="ui pagination menu">
         {% if all_genres.has_previous %}
-            <a class="active item" href="?{{ page_request_var }}={{ contacts.previous_page_number }}">previous</a>
+            <a class="active item" href="?{{ page_request_var }}={{ contacts.previous_page_number }}{% if request.get.q %}&q={{ if request.get.q }}{% endif %}">previous</a>
         {% endif %}
         <span class="item">
             Page {{ all_genres.number }} of {{ all_genres.paginator.num_pages }}.
         </span>
         {% if all_genres.has_next %}
-            <a class="item" href="?{{ page_request_var }}={{ all_genres.next_page_number }}">next</a>
+            <a class="item" href="?{{ page_request_var }}={{ all_genres.next_page_number }}{% if request.get.q %}&q={{ if request.get.q }}{% endif %}">next</a>
         {% endif %}
 
     </div>
