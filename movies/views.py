@@ -4,6 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
 from .forms import GenreForm, MovieForm
+from django.utils import timezone
 
 
 def movie_list(request):
@@ -36,9 +37,13 @@ def movie_detail(request, slug= None):
 def movie_create(request):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
+    if not request.user.is_autheticated():
+        raise Http404
+
     form = MovieForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         movie = form.save(commit=False)
+        movie.user = request.user
         movie.save()
     # if request.method  == "POST":
     #     name = request.POST.get("name")
@@ -58,10 +63,14 @@ def movie_create(request):
 def movie_update(request, movie_id = None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
+    if not request.user.is_authenticated():
+        raise Http404
+
     movie = get_object_or_404(Movie, id=movie_id)
     form = MovieForm(request.POST or None, request.FILES or None, instance= movie)
     if form.is_valid():
         movie = form.save(commit= False)
+        movie.user = request.user
         movie.save()
         # success message
         messages.success(request, "Successfully updated")
@@ -76,6 +85,11 @@ def movie_update(request, movie_id = None):
 
 
 def movie_delete(request, movie_id = None):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
+    if not request.user.is_autheticated():
+        raise Http404
+
     movie = get_object_or_404(Movie, id=movie_id)
     movie.delete()
     messages.success(request, "Successfully deleted")
@@ -83,7 +97,10 @@ def movie_delete(request, movie_id = None):
 
 
 def genre_list(request):
-    genres = Genre.objects.all()
+    today = timezone.now().date()
+    genres = Genre.objects.active()
+    if request.user.is_staff or request.user.is_superuser:
+        genres = Genre.objects.all()
 
     paginator = Paginator(genres, 5) # Show 10 genres per page
 
@@ -102,7 +119,8 @@ def genre_list(request):
     context = {
         "all_genres" : all_genres,
         "title": "genre List",
-        "page_request_var": page_request_var
+        "page_request_var": page_request_var,
+        "today": today,
     }
 
     # if request.user.is_authenticated():
@@ -118,6 +136,9 @@ def genre_list(request):
 
 def genre_detail(request, slug= None):
     genre = get_object_or_404(Genre, slug=slug)
+    if genre.publish > timezone.now().date() or genre.draft:
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise Http404
     context = {
         "genre" : genre,
         "title" : genre.name
@@ -128,9 +149,13 @@ def genre_detail(request, slug= None):
 def genre_create(request):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
+    if not request.user.is_authenticated():
+        raise Http404
+
     form = GenreForm(request.POST or None)
     if form.is_valid():
         genre = form.save(commit=False)
+        genre.user = request.user
         genre.save()
     # if request.method  == "POST":
     #     name = request.POST.get("name")
@@ -150,10 +175,14 @@ def genre_create(request):
 def genre_update(request, genre_id = None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
+    if not request.user.is_autheticated():
+        raise Http404
+
     genre = get_object_or_404(Genre, id=genre_id)
     form = GenreForm(request.POST or None, instance= genre)
     if form.is_valid():
         genre = form.save(commit= False)
+        genre.user = request.user
         genre.save()
         # success message
         messages.success(request, "Successfully updated")
@@ -170,6 +199,9 @@ def genre_update(request, genre_id = None):
 def genre_delete(request, genre_id=None ):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
+    if not request.user.is_autheticated():
+        raise Http404
+
     genre = get_object_or_404(Genre, id=genre_id)
     genre.delete()
     messages.success(request, "Successfully deleted")

@@ -1,7 +1,9 @@
 from django.db import models
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
+from django.utils import timezone
 
 import datetime
 
@@ -9,12 +11,25 @@ YEAR_CHOICES = []
 for r in range(1960, (datetime.datetime.now().year+1)):
     YEAR_CHOICES.append((r, r))
 
+# over reading from Genre.objects.all()
+
+
+class GenreManager(models.Manager):
+    def active(self, *args, **kwargs):
+        # Genre.objects.all() = super(GenreManager, self).all()
+        return super(GenreManager, self).filter(draft=False).filter(publish__lte=timezone.now())
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
+    draft = models.BooleanField(default=False)
+    publish = models.DateField(auto_now=False, auto_now_add=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    objects = GenreManager()
 
     def __str__(self):
         return self.name
@@ -31,6 +46,9 @@ class Movie(models.Model):
     year = models.IntegerField('year', choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     cover = models.FileField(blank=True)
     link_video = models.CharField(max_length=250, blank=True)
+    draft = models.BooleanField(default=False)
+    publish = models.DateField(auto_now=False, auto_now_add=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     created = models.DateTimeField(auto_now=False,  auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 

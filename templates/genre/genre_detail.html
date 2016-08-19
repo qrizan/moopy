@@ -3,8 +3,11 @@
 
 {% block content %}
     <h1>{{ genre.name }}</h1>
-    {{ genre.pk }} <br/>
-    {{ genre.created }} <br/>
-    {{ genre.updated }} <br/>
+    <i>{{ genre.publish }} - {{ genre.created|timesince }} ago</i><br>
+    {% if genre.draft %}<h3>Draft</h3>{% endif %}
+    {% if genre.publish > today %}<h3>Future POst</h3>{% endif %}
+    {% if genre.user.get_full_name %}
+    Author : <i>{{ genre.user.get_full_name }}</i> <br/>
+    {% endif %}
 
 {% endblock %}

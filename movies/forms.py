@@ -11,6 +11,8 @@ class MovieForm(forms.ModelForm):
             "genre",
             "year",
             "cover",
+            "draft",
+            "publish",
             "link_video"
         ]
 
@@ -19,5 +21,7 @@ class GenreForm(forms.ModelForm):
     class Meta:
         model = Genre
         fields = [
-            "name"
+            "name",
+            "draft",
+            "publish"
         ]

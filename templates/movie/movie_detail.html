@@ -7,4 +7,8 @@
     <img src="{{ movie.cover.url }}">
     {% endif %}
     <p>{{ movie.description }}</p>
+
+    {% if movie.user.get_full_name %}
+    Author : <i>{{ movie.user.get_full_name }}</i> <br/>
+    {% endif %}
 {% endblock %}
