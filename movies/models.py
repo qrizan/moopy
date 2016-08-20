@@ -20,11 +20,16 @@ class GenreManager(models.Manager):
         return super(GenreManager, self).filter(draft=False).filter(publish__lte=timezone.now())
 
 
+class MovieManager(models.Manager):
+    def active(self, *args, **kwargs):
+        return super(MovieManager, self).filter(draft=False).filter(publish__lte=timezone.now())
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True,blank=True)
     draft = models.BooleanField(default=False)
-    publish = models.DateField(auto_now=False, auto_now_add=False)
+    publish = models.DateField(auto_now=False, auto_now_add=False,blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -51,6 +56,8 @@ class Movie(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     created = models.DateTimeField(auto_now=False,  auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    objects = MovieManager()
 
     def __str__(self):
         return self.title

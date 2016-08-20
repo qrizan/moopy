@@ -8,20 +8,71 @@ from django.utils import timezone
 
 
 def movie_list(request):
-    all_movies = Movie.objects.all()
+    today = timezone.now().date()
+    movies = Movie.objects.active()
+    if request.user.is_staff or request.user.is_superuser:
+        movies = Movie.objects.all()
+
+    query = request.GET.get("q")
+    if query:
+        movies = movies.filter(title__icontains=query)
+
+    paginator = Paginator(movies, 3) # Show 10 genres per page
+
+    page_request_var = "page"
+    page = request.GET.get(page_request_var)
+
+    try:
+        all_movies = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_movies = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_movies = paginator.page(paginator.num_pages)
+
     context = {
         "all_movies" : all_movies,
-        "title": "movie List"
+        "title": "genre List",
+        "page_request_var": page_request_var,
+        "today": today,
+    }
+    return render(request, "movie/movie_list.html", context)
+
+
+def movie_list_genre(request, genre_id= None):
+    today = timezone.now().date()
+    movies = Movie.objects.active()
+    if request.user.is_staff or request.user.is_superuser:
+        movies = Movie.objects.all()
+
+    movies = movies.filter(genre_id= genre_id)
+
+    query = request.GET.get("q")
+    if query:
+        movies = movies.filter(title__icontains=query)
+
+    paginator = Paginator(movies, 2) # Show 10 genres per page
+
+    page_request_var = "page"
+    page = request.GET.get(page_request_var)
+
+    try:
+        all_movies = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_movies = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_movies = paginator.page(paginator.num_pages)
+
+    context = {
+        "all_movies" : all_movies,
+        "title": "genre List",
+        "page_request_var": page_request_var,
+        "today": today,
     }
 
-    # if request.user.is_authenticated():
-    #     context = {
-    #         "title": "List admin"
-    #     }
-    # else:
-    #     context = {
-    #         "title" : "movie List"
-    #     }
     return render(request, "movie/movie_list.html", context)
 
 
@@ -37,7 +88,8 @@ def movie_detail(request, slug= None):
 def movie_create(request):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
-    if not request.user.is_autheticated():
+
+    if not request.user.is_authenticated():
         raise Http404
 
     form = MovieForm(request.POST or None, request.FILES or None)
@@ -126,15 +178,6 @@ def genre_list(request):
         "page_request_var": page_request_var,
         "today": today,
     }
-
-    # if request.user.is_authenticated():
-    #     context = {
-    #         "title": "List admin"
-    #     }
-    # else:
-    #     context = {
-    #         "title" : "movie List"
-    #     }
     return render(request, "genre/genre_list.html", context)
 
 
@@ -179,7 +222,7 @@ def genre_create(request):
 def genre_update(request, genre_id = None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
-    if not request.user.is_autheticated():
+    if not request.user.is_authenticated():
         raise Http404
 
     genre = get_object_or_404(Genre, id=genre_id)

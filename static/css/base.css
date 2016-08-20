@@ -2,6 +2,9 @@ body {
     background-color: #FFFFFF;
 }
 
+.ui.grid{
+    margin-top: 0.5em;
+}
 .ui.menu .item img.logo {
     margin-right: 1.5em;
 }

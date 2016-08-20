@@ -15,6 +15,10 @@
       <div class="column">
        <div class="ui inverted menu">
         <div class="ui container">
+            <a href="#" class="header item">
+                MooPy
+            </a>
+
             <a href="{% url 'movies:movie_list' %}" class="header item">
                 Movies
             </a>
@@ -25,7 +29,7 @@
        </div>
 
        <div class="ui main container">
-        {% include "messages.html" %}
+          {% include "messages.html" %}
         {% block content %}
         {% endblock %}
        </div>
@@ -46,6 +50,7 @@
 
     <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
     <script src="{% static 'semantic-ui/semantic.min.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
 </body>
 </html>
 

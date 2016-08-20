@@ -7,6 +7,13 @@
     {% if genre.draft %}<h3>Draft</h3>{% endif %}
     {% if genre.publish > today %}<h3>Future POst</h3>{% endif %}
     {% if genre.user.get_full_name %}
+
+    {% for movie in movies %}
+        <h1>{{ movie.title }}</h1>
+    {% endfor %}
+
+
+
     Author : <i>{{ genre.user.get_full_name }}</i> <br/>
     {% endif %}
 

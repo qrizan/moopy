@@ -2,13 +2,39 @@
 {% block title %}Movie Detail{% endblock %}
 
 {% block content %}
-    <h1>{{ movie.title }}</h1>
-    {% if movie.cover %}
-    <img src="{{ movie.cover.url }}">
-    {% endif %}
-    <p>{{ movie.description }}</p>
+   <div class="ui segment">
+       <div class="ui items">
+              <div class="item">
+                <div class="ui small image">
+                    {% if movie.cover %}
+                        <img src="{{ movie.cover.url }}">
+                    {% endif %}
+                </div>
 
-    {% if movie.user.get_full_name %}
-    Author : <i>{{ movie.user.get_full_name }}</i> <br/>
-    {% endif %}
+                <div class="middle aligned content">
+                  <div class="header">{{ movie.title }}  ({{ movie.year }})</div>
+                  <div class="meta">
+                    {% if movie.user.get_full_name %}
+                      <span class="cinema">Author : <i>{{ movie.user.get_full_name }}</i> <br/></span>
+                    {% endif %}
+                  </div>
+                  <div class="description">
+                    <p>{{ movie.description | linebreaks }}</p>
+                  </div>
+                  <div class="extra">
+                    <div class="ui label">{{ movie.genre }}</div>
+                  </div>
+                </div>
+              </div>
+        </div>
+    </div>
+
+
+   <div class="ui segment">
+        <div class="ui embed" data-url="{{ movie.link_video }}" ></div>
+   </div>
+    <a href="{% url 'movies:movie_list' %}" class="fluid ui blue button">
+        All Movies
+    </a>
+
 {% endblock %}

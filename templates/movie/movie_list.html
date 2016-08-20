@@ -7,20 +7,23 @@
 {% block content %}
 
     <div class="ui menu">
-      <div class="ui category search item">
-        <div class="ui transparent icon input">
-          <input class="prompt" type="text" placeholder="Search animals...">
-          <i class="search link icon"></i>
+      <div class="item">
+        <div class="ui action input">
+            <form method="GET" action="">
+              <input type="text" name="q" placeholder="Search" value="{{ request.get.q }}"/>
+              <input class="ui blue button" type="submit" value="Go"/>
+            </form>
         </div>
-        <div class="results"></div>
+      </div>
+      <div class="right item">
+            <a href="{% url 'movies:movie_create' %}" class="fluid ui blue button">New</a>
       </div>
     </div>
 
+   {% for movie in all_movies %}
    <div class="ui segment">
    <div class="ui items">
-        {% for movie in all_movies %}
           <div class="item">
-
             <div class="ui small image">
                 {% if movie.cover %}
                     <img src="{{ movie.cover.url }}">
@@ -28,26 +31,42 @@
             </div>
 
             <div class="middle aligned content">
-              <div class="header">
-                {{ movie.title }}
-              </div>
+              <div class="header">{{ movie.title }}</div>
+
               <div class="description">
-                <p>
-                    {{ movie.description | linebreaks | truncatechars:550 }} <br/>
-                </p>
+                <p>{{ movie.description | linebreaks | truncatechars:550 }}</p>
               </div>
+
               <div class="extra">
-                <div class="ui right floated button">
-                  Action
-                </div>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <a href="{% url 'movies:movie_update' movie.id %}" class="ui blue button">Edit</a>
+                <a href="{% url 'movies:movie_delete' movie.id %}" class="ui blue button">Delete</a>
+                {% endif %}
+                <a href="{{ movie.get_absolute_url }}" class="ui blue right floated button">Detail</a>
               </div>
+
             </div>
 
           </div>
-
-        {% endfor %}
-
     </div>
     </div>
+   {% endfor %}
 
+    <div class="ui pagination menu">
+        {% if all_movies.has_previous %}
+            <a class="active item" href="?{{ page_request_var }}={{ all_movies.previous_page_number }}
+            {% if request.get.q %}&q={{ request.get.q }}{% endif %}">
+                previous
+            </a>
+        {% endif %}
+        <span class="item">
+            Page {{ all_movies.number }} of {{ all_movies.paginator.num_pages }}.
+        </span>
+        {% if all_movies.has_next %}
+            <a class="item" href="?{{ page_request_var }}={{ all_movies.next_page_number }}
+            {% if request.get.q %}&q={{ request.get.q }}{% endif %}">
+                next
+            </a>
+        {% endif %}
+    </div>
 {% endblock %}

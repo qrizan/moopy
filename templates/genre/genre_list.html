@@ -4,33 +4,53 @@
 {% endblock %}
 
 {% block content %}
-<form method="GET" action="">
-    <input type="text" name="q" placeholder="Search" value="{{ request.get.q }}"/>
-    <input type="submit" value="Go"/>
-</form>
-    <div class="ui middle aligned divided list">
-        {% for genre in all_genres %}
-          <div class="item">
-            <div class="right floated content">
-                <a href="{{ genre.get_absolute_url }}" class="ui small blue button">Detail</a>
-            </div>
-            <div class="content">
-                <h3>{{ genre.name }}</h3>
-            </div>
-          </div>
-        {% endfor %}
+    <div class="ui menu">
+      <div class="item">
+        <div class="ui action input">
+            <form method="GET" action="">
+              <input type="text" name="q" placeholder="Search" value="{{ request.get.q }}"/>
+              <input class="ui blue button" type="submit" value="Go"/>
+            </form>
+        </div>
+      </div>
+      <div class="right item">
+            <a href="{% url 'movies:genre_create' %}" class="fluid ui blue button">New</a>
+      </div>
+    </div>
+    <div class="ui segment">
+        <div class="ui middle aligned divided list">
+            {% for genre in all_genres %}
+              <div class="item">
+                <div class="right floated content">
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                    <a href="{% url 'movies:genre_update' genre.id %}" class="ui blue button">Edit</a>
+                    <a href="{% url 'movies:genre_delete' genre.id %}" class="ui blue button">Delete</a>
+                    {% endif %}
+                    <a href="{% url 'movies:movie_list_genre' genre.id %}" class="ui blue button">View</a>
+                </div>
+                <div class="content">
+                    <h3>{{ genre.name }}</h3>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="ui pagination menu">
         {% if all_genres.has_previous %}
-            <a class="active item" href="?{{ page_request_var }}={{ contacts.previous_page_number }}{% if request.get.q %}&q={{ if request.get.q }}{% endif %}">previous</a>
+            <a class="active item" href="?{{ page_request_var }}={{ contacts.previous_page_number }}
+            {% if request.get.q %}&q={{ request.get.q }}{% endif %}">
+                previous
+            </a>
         {% endif %}
         <span class="item">
             Page {{ all_genres.number }} of {{ all_genres.paginator.num_pages }}.
         </span>
         {% if all_genres.has_next %}
-            <a class="item" href="?{{ page_request_var }}={{ all_genres.next_page_number }}{% if request.get.q %}&q={{ if request.get.q }}{% endif %}">next</a>
+            <a class="item" href="?{{ page_request_var }}={{ all_genres.next_page_number }}
+            {% if request.get.q %}&q={{ request.get.q }}{% endif %}">
+                next
+            </a>
         {% endif %}
-
     </div>
 {% endblock %}
