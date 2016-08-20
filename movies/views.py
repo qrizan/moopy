@@ -139,7 +139,7 @@ def movie_update(request, movie_id = None):
 def movie_delete(request, movie_id = None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
-    if not request.user.is_autheticated():
+    if not request.user.is_authenticated():
         raise Http404
 
     movie = get_object_or_404(Movie, id=movie_id)
@@ -246,7 +246,7 @@ def genre_update(request, genre_id = None):
 def genre_delete(request, genre_id=None ):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
-    if not request.user.is_autheticated():
+    if not request.user.is_authenticated():
         raise Http404
 
     genre = get_object_or_404(Genre, id=genre_id)

@@ -15,9 +15,11 @@
             </form>
         </div>
       </div>
+      {% if request.user.is_staff or request.user.is_superuser %}
       <div class="right item">
             <a href="{% url 'movies:movie_create' %}" class="fluid ui blue button">New</a>
       </div>
+      {% endif%}
     </div>
 
    {% for movie in all_movies %}
@@ -39,10 +41,10 @@
 
               <div class="extra">
                 {% if request.user.is_staff or request.user.is_superuser %}
-                <a href="{% url 'movies:movie_update' movie.id %}" class="ui blue button">Edit</a>
-                <a href="{% url 'movies:movie_delete' movie.id %}" class="ui blue button">Delete</a>
+                <a href="{% url 'movies:movie_update' movie.id %}" class="ui blue basic button">Edit</a>
+                <a href="{% url 'movies:movie_delete' movie.id %}" class="ui blue basic button">Delete</a>
                 {% endif %}
-                <a href="{{ movie.get_absolute_url }}" class="ui blue right floated button">Detail</a>
+                <a href="{{ movie.get_absolute_url }}" class="ui blue right floated basic button">Detail</a>
               </div>
 
             </div>
