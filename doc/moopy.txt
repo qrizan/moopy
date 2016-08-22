@@ -1,0 +1,274 @@
+virtualenv .
+source bin/activate
+pip install django
+django-admin startproject moopy
+python manage.py runserver 8888
+python manage.py migrate
+
+settings.py
+- database to mysql
+- pip install mysqlclient
+
+python manage.py createsuperuser
+python manage.py startapp reviews
+python manage.py migrate
+
+- set model 
+- add app to settings.py
+- INSTALLED_APPS
+python manage.py makemigrations reviews
+python manage.py sqlmigrate reviews 0002
+python manage.py migrate
+
+admin.py
+admin.site.register(Movie)
+admin.site.register(Genre)
+
+views.py
+- list
+- create
+- edit
+- delete
+- detail
+
+urls.py
+reviews/urls.py
+
+templates
+'DIRS': [	],
+create folder templates
+- index.html
+- detail.html
+- delete.html
+- create.html
+- edit.html
+
+using render views.py
+add context 
+
+queryset
+python manage.py shell
+>>> from reviews.models import Genre, movie
+>>> Genre.objects.all()
+>>> Genre.objects.filter(title__icontains="I Am")
+>>> Genre.objects.create(name="Mystery")
+>>> for genre in genres:
+...     print (genre.name)
+...     print (genre.updated)
+...     print (genre.created)
+...     print (genre.id)
+...     print (genre.pk)
+... 
+[ enter ]
+
+
+views.py
+all_genres = Genre.objects.all()
+templates/index.html
+for genre in all_genres
+
+django shortcut get_object_or_404
+genre = get_object_or_404(Genre, id=20)
+templates/detail.html
+genre.id
+
+urls.py
+url(r'^detail/(?P<id>\d+)/$', views.detail, name='detail'),
+https://docs.djangoproject.com/en/1.10/topics/http/urls/
+
+views.py 
+def detail(request, genre_id=None):
+genre.name 
+
+index.html
+<a href="{% url "detail" movie_id=movie.id %}">{{ movie.title }} </a><br/>
+
+models.py
+from django.core.urlresolvers import reverse
+get_absolute_url
+
+index.html
+<a href="{{ movie.get_absolute_url }}">{{ movie.title }} </a><br/>
+
+create forms.py
+class MovieForm
+
+views.py
+from .forms import MovieForm
+def create
+
+create.html
+{{ form.as_ p }}
+
+instance views.py 
+def create
+def genre_update
+instance
+form = GenreForm(request.POST or None, instance= genre)
+
+views.py
+return HttpResponseRedirect(genre.get_absolute_url())
+
+django message 
+from django.contrib import messages
+
+template message 
+messages.success(request, "Successfully deleted")
+movie_detail
+
+delete with message
+def genre_delete(request, genre_id=None ):
+
+create base.html template
+create folder genre,movie
+move file html to folder
+
+static file
+- settinngs.py
+STATISFILES_DIR
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn")
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media_cdn")
+
+- urls.py
+from django.conf import settings
+from django.conf.urls.static import static
+if settings.DEBUG
+
+django_env => create folder static_cdn, media_cdn
+moopy => create folder static, media
+python manage.py collectstatic YES
+
+create file static/css/base.css
+python manage.py collectstatic YES
+
+base.html
+<link rel="stylesheet" href="/static/css/base.css"/>
+
+change to
+{% load staticfiles %}
+<link rel="stylesheet" href='{% static "css/base.css" %}'/>
+
+add semantic-ui => folder static
+python manage.py collectstatic YES
+
+create paginator
+https://docs.djangoproject.com/id/1.10/topics/pagination/
+{{ page_request_var }}
+
+
+
+cover = models.FileField(blank=True)
+urls.py
+set url
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+settings.py
+MEDIA_URL = "/cover/"
+
+forms.py
+fiels = cover
+
+views.py
+MovieCreate
+MovieUpdate
+
+templates
+create movie/movie_form.html
+
+movie_form.html
+enctype="multipart/form-data"
+
+views.py
+request.FILES or None
+
+
+remove image media_cdn,media/db.sqlite3
+drop and create database moopy
+remove all file migration
+
+python manage.py migrate
+python manage.py makemigrations
+
+create superuser
+
+models.py
+from django.db.models.signal import pre_save
+
+base user permission	
+if not request.user.is_staff or not request.user.is_superuser:
+    raise Http404
+
+user to post foreigkey
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+
+python manage.py makemigrations
+python manage.py migrate
+
+templates detail
+{% if movie.user.get_full_name %}
+Author : <i>{{ movie.user.get_full_name }}</i> <br/>
+{% endif %}
+
+draft publish
+models.py
+draft = models.BooleanField(default=False)
+publish = models.DateField(auto_now=False, auto_now_add=False)
+
+python manage.py makemigrations
+
+forms.py
+fields = draft,publish
+templates detail
+{% if genre.draft %}
+<b>Draft</b>
+{%  endif %}
+
+
+views.py
+from django.utils import timezone
+genres = Genre.objects..filter(draft=False).filter(publish__lte=timezone.now())
+
+
+models.py
+class GenreManager(models.Manager):
+    def all(self, *args, **kwargs):
+        # Genre.objects.active() = super(GenreManager, self).all()
+        return super(GenreManager, self).filter(draft=False).filter(publish__lte=timezone.now())
+
+
+    objects = GenreManager()        
+
+views.py
+genre_list
+genres = Genre.objects.active()
+
+genre_detail
+if genre.publish > timezone.now().date or genre.draft:
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
+
+genre_list
+today = timezone.now().date()
+genres = Genre.objects.active()
+if request.user.is_staff or request.user.is_superuser:
+    genres = Genre.objects.all()
+
+"today": today
+
+search
+genre_list
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Search"/>
+    <input type="submit" value="Go"/>
+</form>
+
+views.js
+genre_list
+q = request.GET.get("q")
+if q:
+    genres = genres.filter(name__icontains=q)    
+
+genre_list templates
+{% if request.get.q %}&q={{ if request.get.q }}{% endif %}
