@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Movie Form{% endblock %}
 
 {% block head_extra %}
@@ -7,18 +8,7 @@
 
 {% block content %}
     <form class="ui form" method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
-        {% for field in form %}
-
-          <div class="field">
-            <label class="control-label" for="id_{{ field.name }}">{{ field.name }}</label>
-            <div class="fields">
-                {{ field }}
-                <p class="help-text">{{ field.help_text }} </p>
-            </div>
-          </div>
-
-        {% endfor %}
-
+        {{ form | crispy }}
         <input class="ui blue button" tabindex="0" type="submit" value="Save" />
         <div class="ui orange button" tabindex="0">Cancel</div>
     </form>

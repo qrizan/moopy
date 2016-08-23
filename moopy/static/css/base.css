@@ -21,3 +21,10 @@ body {
     margin: 2em 0em 0em;
     padding: 3em 0em;
 }
+
+.wmd-panel {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    min-width: 500px;
+}
