@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Movie Form{% endblock %}
 
+{% block head_extra %}
+    {{ form.media }}
+{% endblock head_extra%}
+
 {% block content %}
     <form class="ui form" method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
         {% for field in form %}
@@ -18,4 +22,13 @@
         <input class="ui blue button" tabindex="0" type="submit" value="Save" />
         <div class="ui orange button" tabindex="0">Cancel</div>
     </form>
+
+    <br/>
+    <hr />
+    <h2>Preview</h2>
+    <div class="content-preview">
+        <h3 id="preview-title"></h3>
+        <p id="preview-description"></p>
+    </div>
+    <hr />
 {% endblock %}

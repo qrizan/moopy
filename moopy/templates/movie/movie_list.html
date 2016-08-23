@@ -36,7 +36,9 @@
               <div class="header">{{ movie.title }}</div>
 
               <div class="description">
-                <p>{{ movie.description | linebreaks | truncatechars:550 }}</p>
+                  <p class="content-markdown">
+                    {{ movie.description | truncatechars:550 }}
+                  </p>
               </div>
 
               <div class="extra">

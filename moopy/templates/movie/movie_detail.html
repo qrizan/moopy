@@ -19,7 +19,9 @@
                     {% endif %}
                   </div>
                   <div class="description">
-                    <p>{{ movie.description | linebreaks }}</p>
+                      <div class="content-markdown">
+                            {{ movie.description }}
+                      </div>
                   </div>
                   <div class="extra">
                     <div class="ui label">{{ movie.genre }}</div>
