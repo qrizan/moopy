@@ -6,8 +6,9 @@ version : 1.0
 - create database name 'moopy'
 - virtualenv venv
 - source /venv/bin/activate
-- pip install Django==1.10
-- pip install mysqlclient
+- pip freeze
+- pip install -r requirements.txt
+
 
 - settings.py
 
@@ -21,8 +22,10 @@ DATABASES = {
     }
 }
 ```
-- cd moopy
-- python3 manage.py runserver
+- run migrations and create super user
+- run server
+
+
 
 url home : http://localhost:8000/movies/
 

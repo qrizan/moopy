@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Movie Detail{% endblock %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+{{ movie.title }} | {{ block.super }}
+{% endblock head_title%}
 
 {% block content %}
    <div class="ui segment">
@@ -35,6 +38,40 @@
    <div class="ui segment">
         <div class="ui embed" data-url="{{ movie.link_video }}" ></div>
    </div>
+
+   <div class="ui segment">
+       <form class="ui form" method="POST" action="">{% csrf_token %}
+           {{ comment_form | crispy }}
+           <input type="submit" value="Post Comment"/>
+       </form>
+
+       <hr />
+       {% for comment in comments %}
+        <p>{{ comment.message }}</p>
+       <i>
+           by : {{ comment.user }} on {{ comment.created | timesince }} ago |
+           {% if comment.children.count > 0 %}
+            {{ comment.children.count }} Comment{% if comment.children.count > 1 %}s{% endif %}
+           {% endif %}
+           <a class="comment-reply-button" href="#">Reply</a> |
+           <a href="{{ comment.get_absolute_url }}">Thread</a>
+       </i>
+            <div class="comment-reply" style="display:none">
+               {% for child_comment in comment.children %}
+                    <p>{{ child_comment.message }}</p>
+                    <i>by : {{ child_comment.user }} on {{ child_comment.created | timesince }} ago</i>
+               {% endfor %}
+
+                <form class="ui form" method="POST" action="">{% csrf_token %}
+                    {{ comment_form | crispy }}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}"/>
+                    <input type="submit" value="Reply"/>
+                </form>
+            </div>
+       <br /><br /><br />
+       {% endfor %}
+   </div>
+
     <a href="{% url 'movies:movie_list' %}" class="fluid ui blue button">
         All Movies
     </a>

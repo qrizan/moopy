@@ -237,7 +237,6 @@ class GenreManager(models.Manager):
         # Genre.objects.active() = super(GenreManager, self).all()
         return super(GenreManager, self).filter(draft=False).filter(publish__lte=timezone.now())
 
-
     objects = GenreManager()        
 
 views.py
@@ -272,3 +271,182 @@ if q:
 
 genre_list templates
 {% if request.get.q %}&q={{ if request.get.q }}{% endif %}
+
+
+markdown
+https://cdnjs.com/libraries/marked
+movie_detail.html
+class content-markdown
+base.js
+    $(".content-markdown").each(function(){
+        var content = $(this).text()
+        var contentMarkdown = marked(content)
+        $(this).html(contentMarkdown)
+    })
+
+django-pagedown
+https://github.com/timmyomahony/django-pagedown
+pip install django-pagedown
+- settings.py => INSTALLED_APPS : pagedown
+python manage.py collectstatic
+
+forms.py
+from pagedown.widgets import PagedownWidget
+
+description = forms.Charfield(widget=PagedownWidget)
+publish = forms.DateField(widget=forms.SelectDateWidget)
+
+- base.html
+ header
+     {% block head_extra %} {% endblock head_extra %}
+
+- movie_form.html
+    {% block head_extra %}
+        {{ form.media }}
+    {% endblock head_extra%}
+
+- base.js
+    $(".content-markdown img").each(function(){
+        $(this).addClass("ui fluid image")
+    })
+
+- forms.py    
+    (show_preview=False)
+
+- movie_form.html
+    <h2>Preview</h2>
+    ...
+    ...
+    ...
+
+create title and description jquery preview
+
+
+forms
+alternatif = https://github.com/dpitkevics/Django-Semantic-UI-Forms
+
+cryspi-forms
+http://django-crispy-forms.readthedocs.io/en/latest/        
+pip install django-crispy-forms
+
+- settings.py
+INSTALLED_APPS = crispy_forms
+CRISPY_TEMPLATE_PACK = 'semantic-ui'
+
+movie_form.html
+{% load crispy_forms_tags %}
+
+custome CSS text area
+
+
+Comment
+
+python3 manage.py startapp comments
+custome comment model
+
+-settings.py
+INSTALLED_APPS = comments
+
+python3 manage.py makemigrations
+python3 manage.py migrate 
+
+
+GENERIC FOREIGN KEY
+https://docs.djangoproject.com/en/1.10/ref/contrib/contenttypes/
+
+comments 
+admin.py
+admin.site.register(Comment)
+
+python manage.py runserver
+
+- movie_detail.html
+{{ movie.comment_set.all }}
+
+restart 
+- drop databales
+- makemigrate
+- migrate
+- create super user
+
+
+- movie_detail.html
+{{ comments }}
+
+comments views.js
+from django.contrib.contenttypes.models import ContentType
+from comments.models import Comment
+
+context =   "comments" : comments
+
+Model Managers for Comment
+
+remove comment content_type from views.py
+
+- views.py 
+comments = Comment.objects.filter_by_movie(movie)
+
+- movie models.py
+    @property
+    def comments(self):
+        movie = self
+        comment = Comment.objects.filter_by_movie(movie)
+        return comment
+
+    comments = movie.comments
+
+
+create comment
+- movie models.py
+    @property
+    def get_content_type(self):
+        instance = self
+        content_type = ContentType.objects.get_for_model(instance.__class__)
+        return content_type
+
+    comments = movie.comments.models
+
+create forms.py comments
+comment_form and initial
+
+- movie_detail.html
+{{ comment_form }}
+
+
+- views.py
+new_comment, created = Comment.objects.get_or_create()
+
+- movie_detail.html 
+form_crispy
+
+comments models
+add parent fields
+
+childrent method
+is_parent method
+
+run makemigrations
+
+
+views.py
+return HttpResponseRedirect 
+
+
+views.py
+created parent_id with try except
+
+movie_detail.html
+custome theme reply comment
+
+
+
+comment thread
+urls.py / comment
+set urls / moopy
+ 
+create template comment_thread
+set comment views
+
+get absolute_url comment
+
+link to commment thread movie detail

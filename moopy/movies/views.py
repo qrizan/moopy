@@ -1,10 +1,13 @@
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Genre
 from .forms import GenreForm, MovieForm
 from django.utils import timezone
+from comments.forms import CommentForm
+from comments.models import Comment
 
 
 def movie_list(request):
@@ -78,9 +81,45 @@ def movie_list_genre(request, genre_id= None):
 
 def movie_detail(request, slug= None):
     movie = get_object_or_404(Movie, slug=slug)
+
+    initial_data = {
+        "content_type" : movie.get_content_type,
+        "object_id": movie.id
+    }
+    form = CommentForm(request.POST or None, initial=initial_data)
+    if form.is_valid():
+        c_type = form.cleaned_data.get("content_type")
+        content_type = ContentType.objects.get(model=c_type)
+        object_id = form.cleaned_data.get("object_id")
+        message = form.cleaned_data.get("message")
+        parent_obj = None
+        try:
+            parent_id = int(request.POST.get("parent_id"))
+        except:
+            parent_id = None
+
+        if parent_id:
+            parent_qs = Comment.objects.filter(id=parent_id)
+            if parent_qs.exists() and parent_qs.count() == 1 :
+                parent_obj = parent_qs.first()
+
+        new_comment, created = Comment.objects.get_or_create(
+                user = request.user,
+                content_type = content_type,
+                object_id = object_id,
+                message = message,
+                parent_id = parent_id,
+                parent = parent_obj
+        )
+
+        return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
+
+    comments = movie.comments
     context = {
         "movie" : movie,
-        "title" : movie.title
+        "title" : movie.title,
+        "comments" : comments,
+        "comment_form" : form
     }
     return render(request, "movie/movie_detail.html", context)
 

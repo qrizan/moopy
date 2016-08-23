@@ -1,9 +1,12 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.utils import timezone
+
+from comments.models import Comment
 
 import datetime
 
@@ -27,9 +30,9 @@ class MovieManager(models.Manager):
 
 class Genre(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True,blank=True)
+    slug = models.SlugField(unique=True, blank=True)
     draft = models.BooleanField(default=False)
-    publish = models.DateField(auto_now=False, auto_now_add=False,blank=True)
+    publish = models.DateField(auto_now=False, auto_now_add=False, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -45,7 +48,7 @@ class Genre(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=150)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True,blank=True)
     description = models.TextField(blank=True, default='')
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     year = models.IntegerField('year', choices=YEAR_CHOICES, default=datetime.datetime.now().year)
@@ -64,6 +67,18 @@ class Movie(models.Model):
 
     def get_absolute_url(self):
         return reverse("movies:movie_detail", kwargs={"slug": self.slug})
+
+    @property
+    def comments(self):
+        movie = self
+        comment = Comment.objects.filter_by_movie(movie)
+        return comment
+
+    @property
+    def get_content_type(self):
+        instance = self
+        content_type = ContentType.objects.get_for_model(instance.__class__)
+        return content_type
 
 
 def create_genre_slug(instance, new_slug=None):

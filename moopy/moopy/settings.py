@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # third party
     'crispy_forms',
+    'pagedown',
+
+    # local app
+    'comments',
     'movies',
-    'pagedown'
 ]
 
 CRISPY_TEMPLATE_PACK = 'uni_form'

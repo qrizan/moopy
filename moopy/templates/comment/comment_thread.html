@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+{{ movie.title }} | {{ block.super }}
+{% endblock head_title%}
+
+{% block content %}
+   <div class="ui segment">
+        <p>{{ comment.message }}</p>
+       <i>
+           by : {{ comment.user }} on {{ comment.created | timesince }} ago |
+           {% if comment.children.count > 0 %}
+            {{ comment.children.count }} Comment{% if comment.children.count > 1 %}s{% endif %}
+           {% endif %}
+       </i>
+            <div>
+               {% for child_comment in comment.children %}
+                    <p>{{ child_comment.message }}</p>
+                    <i>by : {{ child_comment.user }} on {{ child_comment.created | timesince }} ago</i>
+               {% endfor %}
+
+                <form class="ui form" method="POST" action="">{% csrf_token %}
+                    {{ comment_form | crispy }}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}"/>
+                    <input type="submit" value="Reply"/>
+                </form>
+            </div>
+   </div>
+
+{% endblock %}
