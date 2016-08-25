@@ -4,6 +4,9 @@
 {{ movie.title }} | {{ block.super }}
 {% endblock head_title%}
 
+{% block detail_link %}
+<a href="{{ movie.get_absolute_url}}" class="header item">{{ movie.title }}</a>
+{% endblock %}
 {% block content %}
    <div class="ui segment">
        <div class="ui items">

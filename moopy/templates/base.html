@@ -20,7 +20,8 @@
             <a href="{% url 'movies:movie_list' %}" class="header item">
                 MooPy
             </a>
-
+            {% block detail_link %}
+            {% endblock %}
             <a href="{% url 'movies:movie_list' %}" class="header item">
                 Movies
             </a>
@@ -31,9 +32,9 @@
        </div>
 
        <div class="ui main container">
-          {% include "messages.html" %}
-        {% block content %}
-        {% endblock %}
+           {% include "messages.html" %}
+            {% block content %}
+            {% endblock %}
        </div>
 
        <div class="ui inverted vertical footer segment">
