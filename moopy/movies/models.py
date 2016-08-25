@@ -5,9 +5,10 @@ from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.utils import timezone
-
+from django.utils.safestring import mark_safe
 from comments.models import Comment
-
+from markdown_deux import markdown
+from .utils import get_read_time
 import datetime
 
 YEAR_CHOICES = []
@@ -57,6 +58,7 @@ class Movie(models.Model):
     draft = models.BooleanField(default=False)
     publish = models.DateField(auto_now=False, auto_now_add=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+    read_time = models.TimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now=False,  auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
@@ -67,6 +69,12 @@ class Movie(models.Model):
 
     def get_absolute_url(self):
         return reverse("movies:movie_detail", kwargs={"slug": self.slug})
+
+    @property
+    def get_markdown(self):
+        description = self.description
+        markdown_text = markdown(description)
+        return mark_safe(markdown_text)
 
     @property
     def comments(self):
@@ -106,22 +114,20 @@ def create_movie_slug(instance, new_slug=None):
 
 
 def pre_save_genre_receiver(sender, instance, *args, **kwargs):
-    # slug = slugify(instance.name)
-    # exist = Genre.objects.filter(slug=slug).exists()
-    # if exist:
-    #     slug = "%s-%s" %(slug, instance.id)
-    # instance.slug = slug
     if not instance.slug:
         instance.slug = create_genre_slug(instance)
+
+pre_save.connect(pre_save_genre_receiver, sender=Genre)
 
 
 def pre_save_movie_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = create_movie_slug(instance)
 
+        if instance.description:
+            html_string = instance.get_markdown()
+            read_time_var = get_read_time(html_string)
+            instance.read_time = read_time_var
 
-pre_save.connect(pre_save_genre_receiver, sender=Genre)
 
 pre_save.connect(pre_save_movie_receiver, sender=Movie)
-
-

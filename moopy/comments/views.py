@@ -1,13 +1,17 @@
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from .forms import CommentForm
 from .models import Comment
 
 
 def comment_thread(request, id):
-    comment = get_object_or_404(Comment, id=id)
+    # comment = get_object_or_404(Comment, id=id)
+    try:
+        comment = Comment.objects.get(id=id)
+    except:
+        raise Http404
     # content_object = comment.content_object
     # content_id = comment.content_object.id
 
@@ -52,3 +56,28 @@ def comment_thread(request, id):
         "comment_form" : form
     }
     return render(request, "comment/comment_thread.html", context)
+
+
+def comment_delete(request, id):
+    # comment = get_object_or_404(Comment, id=id)
+    try:
+        comment = Comment.objects.get(id=id)
+    except:
+        raise Http404
+
+    if comment.user != request.user:
+        # messages.success(request, "You don't have permission to view this")
+        # raise Http404
+        response = HttpResponse("You don't have permission to view this")
+        response.status_code = 403
+        return response
+
+    if request.method == "POST":
+        parent_comment_url = comment.content_object.get_absolute_url()
+        comment.delete()
+        messages.success(request, "This has ben deleted.")
+        return HttpResponseRedirect(parent_comment_url)
+    context = {
+        "comment" : comment
+    }
+    return render(request, "comment/confirm_delete.html", context)

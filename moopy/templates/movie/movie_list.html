@@ -36,8 +36,8 @@
               <div class="header">{{ movie.title }}</div>
 
               <div class="description">
-                  <p class="content-markdown">
-                    {{ movie.description | truncatechars:550 }}
+                  <p class="preview-description">
+                    {{ movie.get_markdown | truncatechars:550 }}
                   </p>
               </div>
 

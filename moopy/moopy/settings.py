@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # third party
     'crispy_forms',
     'pagedown',
+    'markdown_deux',
 
     # local app
     'comments',

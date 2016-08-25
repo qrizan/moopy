@@ -11,12 +11,18 @@
            by : {{ comment.user }} on {{ comment.created | timesince }} ago |
            {% if comment.children.count > 0 %}
             {{ comment.children.count }} Comment{% if comment.children.count > 1 %}s{% endif %}
+            {% if request.user == comment.user %}
+                <a href="{{ comment.get_delete_url }}">Delete</a>
+            {% endif %}
            {% endif %}
        </i>
             <div>
                {% for child_comment in comment.children %}
                     <p>{{ child_comment.message }}</p>
                     <i>by : {{ child_comment.user }} on {{ child_comment.created | timesince }} ago</i>
+                    {% if request.user == child_comment.user %}
+                        <a href="{{ child_comment.get_delete_url }}">Delete</a>
+                    {% endif %}
                {% endfor %}
 
                 <form class="ui form" method="POST" action="">{% csrf_token %}

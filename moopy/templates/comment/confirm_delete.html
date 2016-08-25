@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+{{ movie.title }} | {{ block.super }}
+{% endblock head_title%}
+
+{% block content %}
+   <div class="ui segment">
+        <form class="ui form" method="POST" action="">{% csrf_token %}
+            <p>Are you sure you want to delte : {{ comment.description }}</p>
+            <input type="submit" value="Confirm"/>
+            <a href="{{ comment.get_absolute_url }}">Cancel</a>
+        </form>
+   </div>
+
+{% endblock %}
