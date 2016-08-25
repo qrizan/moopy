@@ -20,3 +20,38 @@ class UserLoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError("This user is not loger active")
         return super(UserLoginForm, self).clean(*args, **kwargs)
+
+
+class UserRegisterForm(forms.ModelForm):
+    email = forms.EmailField(label="Email")
+    email_confirm = forms.EmailField(label="Confirm Email")
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'email_confirm',
+            'password'
+        ]
+
+    # def clean(self, *args, **kwargs):
+    #     email = self.cleaned_data.get("email")
+    #     email_confirm = self.cleaned_data.get("email_confirm")
+    #     if email != email_confirm:
+    #         raise forms.ValidationError("Email must much")
+    #     email_qs = User.objects.filter(email=email)
+    #     if email_qs.exists():
+    #         raise forms.ValidationError("This email has already been register")
+    #     return super(UserRegisterForm, self).clean(*args, **kwargs)
+
+    def clean_email_confirm(self):
+        email = self.cleaned_data.get("email")
+        email_confirm = self.cleaned_data.get("email_confirm")
+        if email != email_confirm:
+            raise forms.ValidationError("Email must much")
+        email_qs = User.objects.filter(email=email)
+        if email_qs.exists():
+            raise forms.ValidationError("This email has already been register")
+        return email
