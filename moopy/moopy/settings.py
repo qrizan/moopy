@@ -44,8 +44,10 @@ INSTALLED_APPS = [
     'markdown_deux',
 
     # local app
+    'genres',
     'comments',
     'movies',
+
 ]
 
 CRISPY_TEMPLATE_PACK = 'uni_form'

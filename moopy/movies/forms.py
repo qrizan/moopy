@@ -1,6 +1,6 @@
 from django import forms
 from pagedown.widgets import PagedownWidget
-from .models import Movie, Genre
+from .models import Movie
 
 
 class MovieForm(forms.ModelForm):
@@ -18,14 +18,4 @@ class MovieForm(forms.ModelForm):
             "draft",
             "publish",
             "link_video"
-        ]
-
-
-class GenreForm(forms.ModelForm):
-    class Meta:
-        model = Genre
-        fields = [
-            "name",
-            "draft",
-            "publish"
         ]

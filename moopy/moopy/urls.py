@@ -22,6 +22,7 @@ from accounts.views import login_view, register_view, logout_view
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('movies.urls')),
+    url(r'^genres/', include('genres.urls')),
     url(r'^comments/', include('comments.urls')),
     url(r'^login/', login_view, name="login"),
     url(r'^logout/', logout_view, name="logout"),

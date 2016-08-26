@@ -22,7 +22,7 @@
             </a>
             {% block detail_link %}
             {% endblock %}
-            <a href="{% url 'movies:genre_list' %}" class="header item">Genres</a>
+            <a href="{% url 'genres:genre_list' %}" class="header item">Genres</a>
 
           <div class="right menu">
              {% if not request.user.is_authenticated %}

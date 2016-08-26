@@ -10,10 +10,4 @@ urlpatterns = [
     url(r'^(?P<movie_id>\d+)/edit/$', views.movie_update, name='movie_update'),
     url(r'^(?P<movie_id>\d+)/delete/$', views.movie_delete, name='movie_delete'),
     url(r'^(?P<genre_id>\d+)/genre/$', views.movie_list_genre, name='movie_list_genre'),
-
-    url(r'^genres/$', views.genre_list, name='genre_list'),
-    url(r'^genres/detail/(?P<slug>[\w-]+)/$', views.genre_detail, name='genre_detail'),
-    url(r'^genres/create/$', views.genre_create, name='genre_create'),
-    url(r'^genres/(?P<genre_id>\d+)/edit/$', views.genre_update, name='genre_update'),
-    url(r'^genres/(?P<genre_id>\d+)/delete/$', views.genre_delete, name='genre_delete'),
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Movie, Genre
+from .models import Movie
 
 
 class MovieModelAdmin(admin.ModelAdmin):
@@ -12,14 +12,4 @@ class MovieModelAdmin(admin.ModelAdmin):
         model = Movie
 
 
-class GenreModelAdmin(admin.ModelAdmin):
-    list_display = ["name", "updated", "created"]
-    list_display_links = ["updated"]
-    list_editable = ["name"]
-    list_filter = ["created"]
-
-    class Meta:
-        model = Genre
-
 admin.site.register(Movie, MovieModelAdmin)
-admin.site.register(Genre, GenreModelAdmin)

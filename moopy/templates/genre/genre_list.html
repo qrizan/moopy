@@ -15,7 +15,7 @@
       </div>
           {% if request.user.is_staff or request.user.is_superuser %}
           <div class="right item">
-                <a href="{% url 'movies:genre_create' %}" class="fluid ui blue button">New</a>
+                <a href="{% url 'genres:genre_create' %}" class="fluid ui blue button">New</a>
           </div>
           {% endif %}
     </div>
@@ -25,8 +25,8 @@
               <div class="item">
                 <div class="right floated content">
                     {% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
-                    <a href="{% url 'movies:genre_update' genre.id %}" class="ui blue basic button">Edit</a>
-                    <a href="{% url 'movies:genre_delete' genre.id %}" class="ui blue basic button">Delete</a>
+                    <a href="{% url 'genres:genre_update' genre.id %}" class="ui blue basic button">Edit</a>
+                    <a href="{% url 'genres:genre_delete' genre.id %}" class="ui blue basic button">Delete</a>
                     {% endif %}
                     <a href="{% url 'movies:movie_list_genre' genre.id %}" class="ui blue basic button">View</a>
                 </div>
