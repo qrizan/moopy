@@ -24,7 +24,7 @@
             {% for genre in all_genres %}
               <div class="item">
                 <div class="right floated content">
-                    {% if request.user.is_staff or request.user.is_superuser %}
+                    {% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
                     <a href="{% url 'movies:genre_update' genre.id %}" class="ui blue basic button">Edit</a>
                     <a href="{% url 'movies:genre_delete' genre.id %}" class="ui blue basic button">Delete</a>
                     {% endif %}

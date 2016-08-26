@@ -22,12 +22,16 @@
             </a>
             {% block detail_link %}
             {% endblock %}
-            <a href="{% url 'movies:movie_list' %}" class="header item">
-                Movies
-            </a>
-            <a href="{% url 'movies:genre_list' %}" class="header item">
-               Genres
-            </a>
+            <a href="{% url 'movies:genre_list' %}" class="header item">Genres</a>
+
+          <div class="right menu">
+             {% if not request.user.is_authenticated %}
+                 <a href="{% url 'login' %}" class="header item">Login</a>
+                 <a href="{% url 'register' %}" class="header item">Register</a>
+             {% else %}
+                 <a href="{% url 'logout' %}" class="header item">Logout</a>
+             {% endif %}
+          </div>
         </div>
        </div>
 
