@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # third party
     'crispy_forms',
+    'semantic_ui',
     'pagedown',
     'markdown_deux',
 
@@ -50,7 +51,7 @@ INSTALLED_APPS = [
 
 ]
 
-CRISPY_TEMPLATE_PACK = 'uni_form'
+CRISPY_TEMPLATE_PACK = 'semantic-ui'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

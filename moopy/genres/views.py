@@ -93,6 +93,8 @@ def genre_update(request, genre_id = None):
         # success message
         messages.success(request, "Successfully updated")
         return HttpResponseRedirect(genre.get_absolute_url())
+    else:
+        messages.error(request, "Unsuccessfully Updated")
 
     context = {
         "title" : genre.name,
