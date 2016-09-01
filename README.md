@@ -6,6 +6,7 @@ version : 1.0
 - create database name (ex:'moopy')
 - virtualenv venv
 - source /venv/bin/activate
+- pip install Django
 - pip install -r requirements.txt
 
 - settings.py
